@@ -1,11 +1,38 @@
 import pygame
-from network import Network
+import socket
 import pickle
+
+class Network:
+    def __init__(self):
+        self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.server = "192.168.1.46"
+        self.port = 5555
+        self.addr = (self.server, self.port)
+        self.player = self.connect()
+
+    def getPlayer(self):
+        return self.player
+
+    def connect(self):
+        try:
+            self.client.connect(self.addr)
+            return self.client.recv(2048).decode()
+        except:
+            pass
+
+    def send(self, data):
+        try:
+            self.client.send(str.encode(data))
+            return pickle.loads(self.client.recv(2048*2))
+        except socket.error as e:
+            print(e)
+
+#Window Screen
 pygame.font.init()
 
 width = 700
 height = 700
-win = pygame.display.set_mode((width, height))
+window = pygame.display.set_mode((width, height))
 pygame.display.set_caption("Client")
 
 
@@ -18,11 +45,11 @@ class Button:
         self.width = 150
         self.height = 100
 
-    def draw(self, win):
-        pygame.draw.rect(win, self.color, (self.x, self.y, self.width, self.height))
-        font = pygame.font.SysFont("comicsans", 40)
+    def draw(self, window):
+        pygame.draw.rect(window, self.color, (self.x, self.y, self.width, self.height))
+        font = pygame.font.SysFont("", 40)
         text = font.render(self.text, 1, (255,255,255))
-        win.blit(text, (self.x + round(self.width/2) - round(text.get_width()/2), self.y + round(self.height/2) - round(text.get_height()/2)))
+        window.blit(text, (self.x + round(self.width/2) - round(text.get_width()/2), self.y + round(self.height/2) - round(text.get_height()/2)))
 
     def click(self, pos):
         x1 = pos[0]
@@ -33,20 +60,20 @@ class Button:
             return False
 
 
-def redrawWindow(win, game, p):
-    win.fill((128,128,128))
+def redrawWindow(window, game, player):
+    window.fill((128,128,128))
 
     if not(game.connected()):
-        font = pygame.font.SysFont("comicsans", 80)
+        font = pygame.font.SysFont("", 80)
         text = font.render("Waiting for Player...", 1, (255,0,0), True)
-        win.blit(text, (width/2 - text.get_width()/2, height/2 - text.get_height()/2))
+        window.blit(text, (width/2 - text.get_width()/2, height/2 - text.get_height()/2))
     else:
-        font = pygame.font.SysFont("comicsans", 60)
+        font = pygame.font.SysFont("", 60)
         text = font.render("Your Move", 1, (0, 255,255))
-        win.blit(text, (80, 200))
+        window.blit(text, (80, 200))
 
         text = font.render("Opponents", 1, (0, 255, 255))
-        win.blit(text, (380, 200))
+        window.blit(text, (380, 200))
 
         move1 = game.get_player_move(0)
         move2 = game.get_player_move(1)
@@ -54,29 +81,29 @@ def redrawWindow(win, game, p):
             text1 = font.render(move1, 1, (0,0,0))
             text2 = font.render(move2, 1, (0, 0, 0))
         else:
-            if game.p1Went and p == 0:
+            if game.p1Went and player == 0:
                 text1 = font.render(move1, 1, (0,0,0))
             elif game.p1Went:
                 text1 = font.render("Locked In", 1, (0, 0, 0))
             else:
                 text1 = font.render("Waiting...", 1, (0, 0, 0))
 
-            if game.p2Went and p == 1:
+            if game.p2Went and player == 1:
                 text2 = font.render(move2, 1, (0,0,0))
             elif game.p2Went:
                 text2 = font.render("Locked In", 1, (0, 0, 0))
             else:
                 text2 = font.render("Waiting...", 1, (0, 0, 0))
 
-        if p == 1:
-            win.blit(text2, (100, 350))
-            win.blit(text1, (400, 350))
+        if player == 1:
+            window.blit(text2, (100, 350))
+            window.blit(text1, (400, 350))
         else:
-            win.blit(text1, (100, 350))
-            win.blit(text2, (400, 350))
+            window.blit(text1, (100, 350))
+            window.blit(text2, (400, 350))
 
         for btn in btns:
-            btn.draw(win)
+            btn.draw(window)
 
     pygame.display.update()
 
@@ -86,7 +113,7 @@ def main():
     run = True
     clock = pygame.time.Clock()
     n = Network()
-    player = int(n.getP())
+    player = int(n.getPlayer())
     print("You are player", player)
 
     while run:
@@ -99,7 +126,7 @@ def main():
             break
 
         if game.bothWent():
-            redrawWindow(win, game, player)
+            redrawWindow(window, game, player)
             pygame.time.delay(500)
             try:
                 game = n.send("reset")
@@ -108,7 +135,7 @@ def main():
                 print("Couldn't get game")
                 break
 
-            font = pygame.font.SysFont("comicsans", 90)
+            font = pygame.font.SysFont("", 90)
             if (game.winner() == 1 and player == 1) or (game.winner() == 0 and player == 0):
                 text = font.render("You Won!", 1, (255,0,0))
             elif game.winner() == -1:
@@ -116,7 +143,7 @@ def main():
             else:
                 text = font.render("You Lost...", 1, (255, 0, 0))
 
-            win.blit(text, (width/2 - text.get_width()/2, height/2 - text.get_height()/2))
+            window.blit(text, (width/2 - text.get_width()/2, height/8 - text.get_height()/8))
             pygame.display.update()
             pygame.time.delay(2000)
 
@@ -136,28 +163,8 @@ def main():
                             if not game.p2Went:
                                 n.send(btn.text)
 
-        redrawWindow(win, game, player)
-
-def menu_screen():
-    run = True
-    clock = pygame.time.Clock()
-
-    while run:
-        clock.tick(60)
-        win.fill((128, 128, 128))
-        font = pygame.font.SysFont("comicsans", 60)
-        text = font.render("Click to Play!", 1, (255,0,0))
-        win.blit(text, (100,200))
-        pygame.display.update()
-
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                run = False
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                run = False
-
-    main()
+        redrawWindow(window, game, player)
 
 while True:
-    menu_screen()
+    main()
+

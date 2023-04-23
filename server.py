@@ -3,7 +3,7 @@ from _thread import *
 import pickle
 from game import Game
 
-server = "172.20.112.1"
+server = "192.168.1.46"
 port = 5555
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -21,9 +21,9 @@ games = {}
 idCount = 0
 
 
-def threaded_client(conn, p, gameId):
+def threaded_client(conn, player, gameId):
     global idCount
-    conn.send(str.encode(str(p)))
+    conn.send(str.encode(str(player)))
 
     reply = ""
     while True:
@@ -39,7 +39,7 @@ def threaded_client(conn, p, gameId):
                     if data == "reset":
                         game.resetWent()
                     elif data != "get":
-                        game.play(p, data)
+                        game.play(player, data)
 
                     conn.sendall(pickle.dumps(game))
             else:
@@ -57,20 +57,18 @@ def threaded_client(conn, p, gameId):
     conn.close()
 
 
-
 while True:
-    conn, addr = s.accept()
-    print("Connected to:", addr)
+    conn, addr = s.accept()  # set conn and addr to socket
+    print("Connected to:", addr)  # prints what address it is connected to
 
-    idCount += 1
-    p = 0
-    gameId = (idCount - 1)//2
-    if idCount % 2 == 1:
-        games[gameId] = Game(gameId)
+    idCount += 1  # increment number of players
+    player = 0  # sets player to player 1
+    gameId = (idCount - 1) // 2  # sets gameID as # of players -1 / 2
+    if idCount % 2 == 1:  # checks for odd number of players
+        games[gameId] = Game(gameId)  # creates game for player without opponent
         print("Creating a new game...")
-    else:
-        games[gameId].ready = True
-        p = 1
+    else:  # if there are 2 players
+        games[gameId].ready = True  # sets ready to true
+        player = 1  # sets current player as palyer 2
 
-
-    start_new_thread(threaded_client, (conn, p, gameId))
+    start_new_thread(threaded_client, (conn, player, gameId))  # creates new thread for each player
