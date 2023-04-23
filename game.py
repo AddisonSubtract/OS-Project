@@ -29,21 +29,20 @@ class Game:
 
         winner = -1  # default winner to -1 for tied
         # player 1 wins if winner = 0, player 2 wins if winner = 1
-        if p1 == "R" and p2 == "S":
-            winner = 0
-        elif p1 == "S" and p2 == "R":
-            winner = 1
-        elif p1 == "P" and p2 == "R":
-            winner = 0
-        elif p1 == "R" and p2 == "P":
-            winner = 1
-        elif p1 == "S" and p2 == "P":
-            winner = 0
-        elif p1 == "P" and p2 == "S":
-            winner = 1
-
+        if p1 == "R" and p2 == "S":  # p1 rock vs p2 scissor
+            winner = 0  # player 1 wins
+        elif p1 == "S" and p2 == "R":  # p1 scissor vs p2 rock
+            winner = 1  # player 2 wins
+        elif p1 == "P" and p2 == "R":  # p1 paper vs p2 rock
+            winner = 0  # player 1 wins
+        elif p1 == "R" and p2 == "P":  # p1 rock vs p2 paper
+            winner = 1  # player 2 wins
+        elif p1 == "S" and p2 == "P":  # p1 scissor vs p2 paper
+            winner = 0  # player 1 wins
+        elif p1 == "P" and p2 == "S":  # p1 paper vs p2 scissor
+            winner = 1  # player 2 wins
         return winner
 
-    def resetWent(self):  # resets went for both players for next game
+    def resetWent(self):  # resets Went for both players for next game
         self.p1Went = False
         self.p2Went = False
