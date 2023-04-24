@@ -157,7 +157,7 @@ def main():
 
             window.blit(text, (width / 2 - text.get_width() / 2, height / 2 - text.get_height() / 2))  # draw text
             pygame.display.update()  # update display of player
-            pygame.time.delay(5000)  # wait 2 sec for next loop
+            pygame.time.delay(2000)  # wait 2 sec for next loop
 
         for event in pygame.event.get():  # checks events in pygames
             if event.type == pygame.QUIT:  # if player clicks the X

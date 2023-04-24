@@ -46,6 +46,6 @@ class Game:
             winner = 1  # player 2 wins
         return winner
 
-    def resetWent(self):  # resets Went for both players for next game
+    def resetPLayed(self):  # resets Went for both players for next game
         self.p1Played = False
         self.p2Played = False

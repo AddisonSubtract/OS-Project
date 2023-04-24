@@ -40,11 +40,11 @@ def threaded_client(connection, player, gameId):
                     break
                 else:
                     if data == "reset":  # if data was reset, reset Went for both player
-                        game.resetWent()
+                        game.resetPLayed()
                     elif data != "get":  # if data does not equal get, send if player has gone
                         game.playing(player, data)
 
-                    connection.sendall(pickle.dumps(game))  # if not reset or get send player info to clients
+                    connection.sendall(pickle.dumps(game))  # if not reset or get, send player info to clients
             else:
                 break
         except:
