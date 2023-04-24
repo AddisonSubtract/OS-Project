@@ -21,14 +21,14 @@ games = {}
 idCount = 0
 
 
-def threaded_client(conn, player, gameId):
+def threaded_client(connection, player, gameId):
     global idCount  # counts number of players
-    conn.send(str.encode(str(player)))  # sends players to client
+    connection.send(str.encode(str(player)))  # sends players to client
 
     reply = ""
     while True:
         try:
-            data = conn.recv(4096).decode()  # receive data from client
+            data = connection.recv(4096).decode()  # receive data from client
 
             if gameId in games:  # checks which game is running
                 game = games[gameId]  # set current game with gameID as game
@@ -41,7 +41,7 @@ def threaded_client(conn, player, gameId):
                     elif data != "get":  # if data does not equal get, send if player has went
                         game.play(player, data)
 
-                    conn.sendall(pickle.dumps(game))  # if not reset or get send player info to clients
+                    connection.sendall(pickle.dumps(game))  # if not reset or get send player info to clients
             else:
                 break
         except:
@@ -54,12 +54,13 @@ def threaded_client(conn, player, gameId):
     except:
         pass
     idCount -= 1  # reduce player count
-    conn.close()  # close socket
+    connection.close()  # close socket
+    return
 
 
 while True:
-    conn, addr = s.accept()  # set conn and addr to socket
-    print("Connected to:", addr)  # prints what address it is connected to
+    connection, address = s.accept()  # set connection and address to socket
+    print("Connected to:", address)  # prints what address it is connected to
 
     idCount += 1  # increment number of players
     player = 0  # sets player to player 1
@@ -71,4 +72,4 @@ while True:
         games[gameId].ready = True  # sets ready to true
         player = 1  # sets current player as player 2
 
-    start_new_thread(threaded_client, (conn, player, gameId))  # creates new thread for each player
+    start_new_thread(threaded_client, (connection, player, gameId))  # creates new thread for each player
