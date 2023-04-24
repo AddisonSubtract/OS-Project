@@ -23,7 +23,9 @@ connected = set()
 games = {}
 idCount = 0
 
-
+# Creates a thread for every client
+# input: connection - connection to socket, player - specific player, gameID - ID of the game
+# returns: none
 def threaded_client(connection, player, gameId):
     global idCount  # counts number of players
     connection.send(str.encode(str(player)))  # sends player to client

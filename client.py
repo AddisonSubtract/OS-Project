@@ -13,16 +13,25 @@ class Network:
         self.addr = (self.server, self.port)
         self.player = self.connect()
 
+    # gets which player is playing
+    # input: none
+    # return: player - player that is playing on the client
     def getPlayer(self):  # gets which player is playing
         return self.player
 
+    # connect clients to server
+    # input: none
+    # return: player's ID
     def connect(self):  # connect players to server
         try:
             self.client.connect(self.addr)  # set client to connect to server
-            return self.client.recv(2048).decode()  # get player ID
+            return self.client.recv(2048).decode()  # get player's ID
         except:
             pass
 
+    # sends information to the server
+    # input: data - strings sent to server
+    # return: returns winner, resetting game or if a player made a move
     def send(self, data):  # sends data to server
         try:
             self.client.send(str.encode(data))  # sends data to server
@@ -49,6 +58,9 @@ class Button:
         self.width = 150
         self.height = 150
 
+    # creates buttons and text on button
+    # input: window - specified clients' window
+    # return: none
     def draw(self, window):  # draws buttons and text
         pygame.draw.rect(window, self.color, (self.x, self.y, self.width, self.height))  # draws rectangle
         font = pygame.font.SysFont("", 1)  # set font style and size
@@ -56,6 +68,9 @@ class Button:
         window.blit(text, (self.x + round(self.width / 2) - round(text.get_width() / 2), self.y + round(self.height / 2)
                            - round(text.get_height() / 2)))  # draws text and set text center
 
+    # checks if the click was on a button
+    # input: pos - x, y positions of mouse click
+    # return: true/false - if the click was in button or not
     def click(self, pos):  # check for location of clicks
         x1 = pos[0]  # get x of mouse
         y1 = pos[1]  # get y of mouse
@@ -65,6 +80,8 @@ class Button:
             return False
 
 
+# redraws window of the client
+# input: window - the window of the client, game - information of the game, player - player of the client
 def redrawWindow(window, game, player):
     window.fill((72, 4, 115))
     bg = pygame.image.load("background.png")  # load background img
@@ -116,6 +133,7 @@ def redrawWindow(window, game, player):
     pygame.display.update()  # update display
 
 
+# arguments for button
 btns = [Button("Rock", 50, 100, (25, 171, 160)), Button("Scissors", 50, 300, (179, 204, 51)),
         Button("Paper", 50, 500, (226, 18, 44))]  # arguments for each button
 
