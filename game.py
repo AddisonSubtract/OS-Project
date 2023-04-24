@@ -1,3 +1,6 @@
+# Alvin Zheng 001266528
+# Addison Zheng 001266527
+
 class Game:
     def __init__(self, id):
         self.p1Played = False  # check if player 1 made a move
@@ -9,7 +12,7 @@ class Game:
     def getMove(self, player):  # gets the move for specified player
         return self.moves[player]
 
-    def play(self, player, move):  # checks if player has made a move
+    def playing(self, player, move):  # checks if player has made a move
         self.moves[player] = move  # sets the move of the player as the input
         if player == 0:  # checks if the player was player 1
             self.p1Played = True  # set that player 1 has made a move
@@ -22,7 +25,7 @@ class Game:
     def bothPlayed(self):  # check if both players made a move
         return self.p1Played and self.p2Played  # return values for p1Played and p2Played
 
-    def winner(self):  # checks for winner
+    def getWinner(self):  # checks for winner
 
         p1 = self.moves[0].upper()[0]  # grab move for player 1 and turn the move to uppercase
         p2 = self.moves[1].upper()[0]  # grab move for player 2 and turn the move to uppercase

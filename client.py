@@ -2,6 +2,8 @@ import pygame
 import socket
 import pickle
 
+# Alvin Zheng 001266528
+# Addison Zheng 001266527
 
 class Network:
     def __init__(self):
@@ -17,7 +19,7 @@ class Network:
     def connect(self):  # connect players to server
         try:
             self.client.connect(self.addr)  # set client to connect to server
-            return self.client.recv(2048).decode()  # get
+            return self.client.recv(2048).decode()  # get player ID
         except:
             pass
 
@@ -145,10 +147,10 @@ def main():
                 break
 
             font = pygame.font.SysFont("", 150)
-            if (game.winner() == 1 and player == 1) or (game.winner() == 0 and player == 0):  # check which player won
+            if (game.getWinner() == 1 and player == 1) or (game.getWinner() == 0 and player == 0):  # check which player won
                 # and if the client is that player
                 text = font.render("You Won!", 1, (255, 0, 0), True)  # set text as won
-            elif game.winner() == -1:  # if game was tied
+            elif game.getWinner() == -1:  # if game was tied
                 text = font.render("Tie Game!", 1, (255, 0, 0), True)  # set text as Tie
             else:  # if player did not win
                 text = font.render("You Lost...", 1, (255, 0, 0), True)  # set text to Lost

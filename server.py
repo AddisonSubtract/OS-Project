@@ -3,6 +3,9 @@ from _thread import *
 import pickle
 from game import Game
 
+# Alvin Zheng 001266528
+# Addison Zheng 001266527
+
 server = "192.168.1.47"  # ip address of the server
 port = 5555  # port number
 
@@ -23,7 +26,7 @@ idCount = 0
 
 def threaded_client(connection, player, gameId):
     global idCount  # counts number of players
-    connection.send(str.encode(str(player)))  # sends players to client
+    connection.send(str.encode(str(player)))  # sends player to client
 
     reply = ""
     while True:
@@ -38,8 +41,8 @@ def threaded_client(connection, player, gameId):
                 else:
                     if data == "reset":  # if data was reset, reset Went for both player
                         game.resetWent()
-                    elif data != "get":  # if data does not equal get, send if player has went
-                        game.play(player, data)
+                    elif data != "get":  # if data does not equal get, send if player has gone
+                        game.playing(player, data)
 
                     connection.sendall(pickle.dumps(game))  # if not reset or get send player info to clients
             else:
@@ -73,3 +76,4 @@ while True:
         player = 1  # sets current player as player 2
 
     start_new_thread(threaded_client, (connection, player, gameId))  # creates new thread for each player
+
